@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To do List</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .details {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(46, 45, 45, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+        }
+        
+        .task-details {
+            height: 40%;
+            width: 40%;
+            display: flex;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(249, 246, 246, 0.2), 0 6px 20px 0 rgba(249, 246, 246, 0.97);
+            border-radius: 15px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .cancel {
+            height: fit-content;
+            position: absolute;
+            height: 60px;
+            width: 60px;
+            top: 5%;
+            right: 5%;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px 0 rgba(249, 246, 246, 0.2), 0 6px 20px 0 rgba(249, 246, 246, 0.97);
+        }
+        
+        .title,
+        .des {
+            text-align: center;
+        }
+        
+        @media screen and (max-width: 750px) {
+            #app {
+                display: flex;
+                flex-direction: column;
+            }
+            .to-do-container {
+                margin: 15px;
+                height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            .work-list {
+                /* visibility: hidden; */
+                height: fit-content;
+                width: 100%;
+                margin: 15px;
+                margin-top: 30px;
+                border-radius: 25px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                overflow: auto;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="details">
+            <div class="task-details">
+                <img class="cancel" src="./src/assets/cancel.svg" alt="">
+                <h1 class="title">My Task Name</h1>
+                <p class="des">Description of my task and all the details of my task</p>
+            </div>
+        </div>
+        <div class="del-popup">
+            <div class="popup">
+                <h1 class="title">Are You Sure</h1>
+                <p class="des">Are you sure you want to permanently delete this?</p>
+                <div class="button-popup">
+                    <div class="cancel-button ">Cancel</div>
+                    <div class="del-button">Delete</div>
+                </div>
+            </div>
+        </div>
+        <div class="edit">
+            <div class="edit-form">
+                <img class="cancel-update" src="./src/assets/cancel.svg" alt="">
+                <input type="text" class="update-text" placeholder="Enter Update Title......">
+                <textarea class="update-description" name="w3review" rows="4" cols="50" placeholder="Enter Update description... "></textarea>
+                <div class="update-button">update</div>
+            </div>
+
+        </div>
+        <div class="to-do-container">
+
+            <div class="search-submit">
+                <h1 class="name">To Do</h1>
+                <input type="text" name="text" class="search-bar" placeholder="Add Task Title....">
+                <textarea class="description" name="w3review" rows="4" cols="50" placeholder="Add Task Description... "></textarea>
+                <!-- <input type="text " class="search-bar " id="search " placeholder="Search location... " minlength="3 "  > -->
+
+
+                <div class="button ">
+                    <div class="clear-button ">Clear</div>
+                    <div class="save-button ">Save</div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="work-list ">
+            <p class="count ">Number of items</p>
+            <ul class="append_list ">
+                <li class="task-aliment ">
+                    <p>Task</p>
+                    <div>
+                        <img class="del-update " src="./src/assets/update.svg " alt=" ">
+                        <img class="del-update " src="./src/assets/del.svg " alt=" ">
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>
