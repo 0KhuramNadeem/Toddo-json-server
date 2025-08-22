@@ -82,7 +82,7 @@ const updateTask = () => {
 
 
         let paragraph = document.createElement("p");
-        myLi.classList.add("text-name");
+        paragraph.classList.add("text-name");
         paragraph.textContent = `${counter}. ${item.title}`;
         paragraph.addEventListener("click", function() {
             title.textContent = item.title;
