@@ -21,8 +21,15 @@ const des = document.querySelector(".des");
 const cancel = document.querySelector(".cancel");
 const all_delete = document.querySelector(".delete-all");
 const no_data = document.querySelector(".no-data");
+const del_button_all = document.querySelector(".del-button-all");
+const del_all_pop = document.querySelector(".del-all-pop");
+const cancel_button_all = document.querySelector(".cancel-button-all");
 save_button.disabled = false;
 save_button.classList.add("dis");
+update_button.disabled = false;
+update_button.classList.add("dis");
+
+const baseUrl = "https://backend-json-production.up.railway.app/toDoData"
 
 
 let my_item;
@@ -32,12 +39,12 @@ let myArr = [];
 // myArr = JSON.parse(localStorage.getItem("tasks"));
 
 let id_counter = 0;
-id_counter = localStorage.getItem("counter")
+// id_counter = localStorage.getItem("counter")
 
 
 const dbWrapperPatch = (resourceId, updateData) => {
     return new Promise((resolve) => {
-        resolve(fetch(`http://localhost:3000/toDoData/${resourceId}`, {
+        resolve(fetch(`${baseUrl}/${resourceId}`, {
             method: 'PATCH',
 
             body: JSON.stringify(updateData)
@@ -48,7 +55,7 @@ const dbWrapperPatch = (resourceId, updateData) => {
 
 const dbWrapperPost = (title, description) => {
     return new Promise((resolve, reject) => {
-        resolve(fetch("http://localhost:3000/toDoData", {
+        resolve(fetch(`${baseUrl}`, {
             method: "POST",
             body: JSON.stringify({
                 title: `${title}`,
@@ -60,7 +67,7 @@ const dbWrapperPost = (title, description) => {
 
 const dbWrapperDelete = (resourceId) => {
     return new Promise((resolve, reject) => {
-        resolve(fetch(`http://localhost:3000/toDoData/${resourceId}`, {
+        resolve(fetch(`${baseUrl}/${resourceId}`, {
             method: 'DELETE',
         }))
     });
@@ -70,7 +77,7 @@ const dbWrapperDelete = (resourceId) => {
 const dbWrapperGet = () => {
     return new Promise((resolve, reject) => {
 
-        resolve(fetch("http://localhost:3000/toDoData", {
+        resolve(fetch(`${baseUrl}`, {
                 method: "GET"
             }))
             // reject(error);
@@ -82,7 +89,6 @@ const dbWrapperGet = () => {
 dbWrapperGet().then((response) => {
         return response.json();
     }).then((data) => {
-        console.log(data);
         myArr = data;
         updateTask();
     })
@@ -110,7 +116,7 @@ const delItem = (item) => {
 let counter = 0;
 
 const updateTask = () => {
-
+    let mycount = 0;
     no_data.style.visibility = 'hidden';
     append_list.innerHTML = "";
     if (myArr.length == 0) {
@@ -124,7 +130,7 @@ const updateTask = () => {
 
 
     myArr.forEach((item) => {
-
+        mycount++;
         let myLi = document.createElement("li");
         myLi.classList.add("task-aliment");
 
@@ -132,7 +138,7 @@ const updateTask = () => {
 
         let paragraph = document.createElement("p");
         paragraph.classList.add("text-name");
-        paragraph.textContent = `${counter}. ${item.title}`;
+        paragraph.textContent = `${mycount}. ${item.title}`;
         paragraph.addEventListener("click", function() {
             title.textContent = "Title : " + item.title;
             if (item.description == "") {
@@ -191,7 +197,6 @@ search_bar.addEventListener("keydown", (event) => {
     } else {
         check++
     }
-    console.log(event.target.value.length);
     if (check >= 3) {
         save_button.disabled = true;
         save_button.classList.remove("dis");
@@ -220,7 +225,6 @@ save_button.addEventListener("click", () => {
             dbWrapperGet().then((response) => {
                     return response.json();
                 }).then((data) => {
-                    console.log(data);
                     myArr = data;
                     updateTask();
                 })
@@ -259,13 +263,13 @@ cancel_button.addEventListener("click", (event) => {
 del_button.addEventListener("click", (event) => {
     counter--;
     dbWrapperDelete(my_item.id).then(() => {
-        console.log("deleted");
         dbWrapperGet().then((response) => {
                 return response.json();
             }).then((data) => {
-                console.log(data);
                 myArr = data;
                 updateTask();
+                del_popup.style.visibility = "hidden";
+                my_item = null;
             })
             .catch((error) => {
                 console.log(error);
@@ -273,21 +277,39 @@ del_button.addEventListener("click", (event) => {
 
     })
 
-    updateTask();
-    del_popup.style.visibility = "hidden";
-    my_item = null;
-});
 
+});
+update_text.addEventListener("keyup", (event) => {
+
+    if (my_item.title === update_text.value && my_item.description === update_description.value) {
+        update_button.disabled = false;
+        update_button.classList.add("dis");
+    } else {
+        update_button.disabled = true;
+        update_button.classList.remove("dis");
+    }
+})
+
+update_description.addEventListener("keyup", (event) => {
+
+    if (my_item.description === update_description.value && my_item.title === update_text.value) {
+        update_button.disabled = false;
+        update_button.classList.add("dis");
+    } else {
+        update_button.disabled = true;
+        update_button.classList.remove("dis");
+    }
+})
 update_button.addEventListener("click", (event) => {
 
 
-    console.log(my_item);
     if (update_text.value === "") {
         update_text.value = "";
         update_description.value = "";
         edit.style.visibility = 'hidden';
         return;
     }
+    if (my_item.title === update_text.value) {}
     let new_val = update_text.value;
     let new_des = update_description.value;
 
@@ -296,11 +318,9 @@ update_button.addEventListener("click", (event) => {
         description: `${ new_des}`
     }
     dbWrapperPatch(my_item.id, updateData).then(() => {
-        console.log("updated");
         dbWrapperGet().then((response) => {
                 return response.json();
             }).then((data) => {
-                console.log(data);
                 myArr = data;
                 updateTask();
             })
@@ -317,17 +337,25 @@ update_button.addEventListener("click", (event) => {
 });
 
 all_delete.addEventListener("click", (event) => {
+    if (myArr.length === 0) {
+        return;
+    }
+    del_all_pop.style.visibility = 'visible'
+
+
+});
+
+del_button_all.addEventListener("click", (event) => {
 
     myArr.forEach((item) => {
         dbWrapperDelete(item.id).then(() => {
-            console.log("deleted");
             dbWrapperGet().then((response) => {
                     return response.json();
                 }).then((data) => {
-                    console.log(data);
                     myArr = data;
                     counter = 0;
                     updateTask();
+                    del_all_pop.style.visibility = 'hidden'
                 })
                 .catch((error) => {
                     console.log(error);
@@ -336,5 +364,8 @@ all_delete.addEventListener("click", (event) => {
         })
     });
 
-
 });
+
+cancel_button_all.addEventListener("click", (event) => {
+    del_all_pop.style.visibility = 'hidden'
+})
